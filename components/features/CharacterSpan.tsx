@@ -57,7 +57,7 @@ export const CharacterSpan: React.FC<CharacterSpanProps> = ({ char, fontFamily, 
           ease: [0.4, 0, 0.2, 1],
         }}
         style={{
-          fontFamily: fontFamily === 'system-ui' ? fontFamily : `'${fontFamily}', sans-serif`,
+          fontFamily: `"${fontFamily}", system-ui`,
           fontSize: 'inherit',
           lineHeight: 'inherit',
         }}
