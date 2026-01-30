@@ -181,10 +181,39 @@ export const TextCanvas: React.FC<TextCanvasProps> = ({ onFontClick }) => {
                       const html2canvas = (await import('html2canvas')).default;
                       const element = document.querySelector('.font-bold.leading-tight') as HTMLElement;
                       if (element) {
-                        const canvas = await html2canvas(element, {
+                        // 임시 컨테이너 생성
+                        const wrapper = document.createElement('div');
+                        wrapper.style.position = 'fixed';
+                        wrapper.style.left = '-9999px';
+                        wrapper.style.top = '0';
+                        wrapper.style.width = '1920px';
+                        wrapper.style.height = '1080px';
+                        wrapper.style.backgroundColor = '#000000';
+                        wrapper.style.display = 'flex';
+                        wrapper.style.alignItems = 'center';
+                        wrapper.style.justifyContent = 'center';
+                        wrapper.style.padding = '120px';
+                        
+                        // 텍스트 복제
+                        const clone = element.cloneNode(true) as HTMLElement;
+                        clone.style.textAlign = 'center';
+                        clone.style.width = 'auto';
+                        clone.style.maxWidth = '100%';
+                        
+                        wrapper.appendChild(clone);
+                        document.body.appendChild(wrapper);
+                        
+                        // 캡처
+                        const canvas = await html2canvas(wrapper, {
                           backgroundColor: '#000000',
                           scale: 2,
+                          width: 1920,
+                          height: 1080,
                         });
+                        
+                        // 정리
+                        document.body.removeChild(wrapper);
+                        
                         const link = document.createElement('a');
                         link.download = 'random-typeface.png';
                         link.href = canvas.toDataURL();
