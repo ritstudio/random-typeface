@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 interface ButtonProps {
@@ -23,7 +22,7 @@ export const Button: React.FC<ButtonProps> = ({
   onClick,
   type = 'button',
 }) => {
-  const baseStyles = 'font-medium rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseStyles = 'font-medium rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 hover:scale-[1.02]';
   
   const variants = {
     primary: 'bg-[#007AFF] dark:bg-[#0A84FF] text-white hover:opacity-90 focus:ring-[#007AFF] disabled:hover:opacity-50',
@@ -39,15 +38,13 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   return (
-    <motion.button
-      whileHover={!disabled ? { scale: 1.02 } : {}}
-      whileTap={!disabled ? { scale: 0.98 } : {}}
+    <button
       className={cn(baseStyles, variants[variant], sizes[size], className)}
       disabled={disabled}
       onClick={onClick}
       type={type}
     >
       {children}
-    </motion.button>
+    </button>
   );
 };
