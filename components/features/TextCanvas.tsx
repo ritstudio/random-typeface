@@ -14,12 +14,14 @@ export const TextCanvas: React.FC<TextCanvasProps> = ({ onFontClick }) => {
     inputText, 
     characters, 
     fontSize, 
+    letterSpacing,
     textAlign, 
     textColor, 
     setInputText, 
     generateFonts, 
     regenerateFonts, 
     setFontSize,
+    setLetterSpacing,
     setTextAlign,
     setTextColor
   } = useTextStore();
@@ -52,6 +54,7 @@ export const TextCanvas: React.FC<TextCanvasProps> = ({ onFontClick }) => {
               className="font-bold leading-tight break-words whitespace-pre-wrap"
               style={{ 
                 fontSize: `${fontSize}px`,
+                letterSpacing: `${letterSpacing}px`,
                 textAlign: textAlign,
                 color: textColor
               }}
@@ -80,12 +83,12 @@ export const TextCanvas: React.FC<TextCanvasProps> = ({ onFontClick }) => {
         <div className="max-w-6xl mx-auto">
           {/* Controls - Only show when result exists */}
           {hasResult && (
-            <div className="mb-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Font Size */}
+            <div className="mb-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+              {/* Text Size */}
               <div className="bg-[#1a1a1a] rounded-2xl p-4">
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-xs font-medium text-gray-400">
-                    Font Size
+                    Text Size
                   </label>
                   <span className="text-xs text-gray-500">
                     {fontSize}px
@@ -100,6 +103,29 @@ export const TextCanvas: React.FC<TextCanvasProps> = ({ onFontClick }) => {
                   className="w-full h-2 bg-gray-800 rounded-lg appearance-none cursor-pointer"
                   style={{
                     background: `linear-gradient(to right, #D0FF00 0%, #D0FF00 ${((fontSize - 16) / (200 - 16)) * 100}%, #2a2a2a ${((fontSize - 16) / (200 - 16)) * 100}%, #2a2a2a 100%)`
+                  }}
+                />
+              </div>
+
+              {/* Text Spacing */}
+              <div className="bg-[#1a1a1a] rounded-2xl p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-xs font-medium text-gray-400">
+                    Text Spacing
+                  </label>
+                  <span className="text-xs text-gray-500">
+                    {letterSpacing}px
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="-10"
+                  max="50"
+                  value={letterSpacing}
+                  onChange={(e) => setLetterSpacing(Number(e.target.value))}
+                  className="w-full h-2 bg-gray-800 rounded-lg appearance-none cursor-pointer"
+                  style={{
+                    background: `linear-gradient(to right, #D0FF00 0%, #D0FF00 ${((letterSpacing + 10) / (50 + 10)) * 100}%, #2a2a2a ${((letterSpacing + 10) / (50 + 10)) * 100}%, #2a2a2a 100%)`
                   }}
                 />
               </div>
