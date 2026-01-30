@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTextStore } from '@/store/textStore';
 import { CharacterSpan } from './CharacterSpan';
@@ -10,6 +10,9 @@ interface TextCanvasProps {
 }
 
 export const TextCanvas: React.FC<TextCanvasProps> = ({ onFontClick }) => {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportSuccess, setExportSuccess] = useState(false);
   const { 
     inputText, 
     characters, 
@@ -193,17 +196,42 @@ export const TextCanvas: React.FC<TextCanvasProps> = ({ onFontClick }) => {
             />
             
             <div className="flex items-center gap-2">
-              <button
-                onClick={generateFonts}
-                disabled={!canGenerate}
-                className="px-8 h-12 bg-[#D0FF00] hover:bg-[#B8E600] disabled:bg-gray-800 disabled:cursor-not-allowed text-black font-bold rounded-xl transition-all duration-200 disabled:text-gray-600 shadow-lg hover:shadow-xl"
+              <motion.button
+                onClick={async () => {
+                  setIsGenerating(true);
+                  generateFonts();
+                  await new Promise(resolve => setTimeout(resolve, 600));
+                  setIsGenerating(false);
+                }}
+                disabled={!canGenerate || isGenerating}
+                whileTap={{ scale: 0.95 }}
+                className="px-8 h-12 bg-[#D0FF00] hover:bg-[#B8E600] disabled:bg-gray-800 disabled:cursor-not-allowed text-black font-bold rounded-xl transition-all duration-200 disabled:text-gray-600 shadow-lg hover:shadow-xl flex items-center gap-2 relative overflow-hidden"
               >
-                Random Generate
-              </button>
+                {isGenerating ? (
+                  <>
+                    <motion.svg
+                      className="w-5 h-5"
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </motion.svg>
+                    <span>Generating...</span>
+                  </>
+                ) : (
+                  <span>Random Generate</span>
+                )}
+              </motion.button>
               
               {hasResult && (
-                <button
+                <motion.button
                   onClick={async () => {
+                    setIsExporting(true);
+                    setExportSuccess(false);
+                    
                     const html2canvas = (await import('html2canvas')).default;
                     const element = document.querySelector('.font-bold.leading-tight') as HTMLElement;
                     if (element) {
@@ -244,15 +272,56 @@ export const TextCanvas: React.FC<TextCanvasProps> = ({ onFontClick }) => {
                       link.download = 'random-typeface.png';
                       link.href = canvas.toDataURL();
                       link.click();
+                      
+                      setExportSuccess(true);
+                      setTimeout(() => {
+                        setIsExporting(false);
+                        setExportSuccess(false);
+                      }, 2000);
                     }
                   }}
-                  className="px-6 h-12 bg-white hover:bg-gray-100 text-black font-medium rounded-xl transition-all duration-200 flex items-center gap-2"
+                  whileTap={{ scale: 0.95 }}
+                  disabled={isExporting}
+                  className="px-6 h-12 bg-white hover:bg-gray-100 disabled:bg-gray-300 text-black font-medium rounded-xl transition-all duration-200 flex items-center gap-2 relative overflow-hidden"
                 >
-                  Export
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                  </svg>
-                </button>
+                  {isExporting && !exportSuccess && (
+                    <motion.svg
+                      className="w-4 h-4"
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </motion.svg>
+                  )}
+                  {exportSuccess ? (
+                    <>
+                      <motion.svg
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="w-4 h-4 text-green-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </motion.svg>
+                      <span>Exported!</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Export</span>
+                      {!isExporting && (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                      )}
+                    </>
+                  )}
+                </motion.button>
               )}
             </div>
           </div>
