@@ -167,21 +167,12 @@ export const TextCanvas: React.FC<TextCanvasProps> = ({ onFontClick }) => {
             />
             
             <div className="flex items-center gap-2">
-              {hasResult && (
-                <button
-                  onClick={regenerateFonts}
-                  className="px-6 h-12 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-xl transition-all duration-200"
-                >
-                  Random
-                </button>
-              )}
-              
               <button
                 onClick={generateFonts}
                 disabled={!canGenerate}
                 className="px-8 h-12 bg-[#D0FF00] hover:bg-[#B8E600] disabled:bg-gray-800 disabled:cursor-not-allowed text-black font-bold rounded-xl transition-all duration-200 disabled:text-gray-600 shadow-lg hover:shadow-xl"
               >
-                Generate
+                Random Generate
               </button>
               
               {hasResult && (
