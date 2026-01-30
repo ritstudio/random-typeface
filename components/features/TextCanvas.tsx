@@ -168,12 +168,34 @@ export const TextCanvas: React.FC<TextCanvasProps> = ({ onFontClick }) => {
             
             <div className="flex items-center gap-2">
               {hasResult && (
-                <button
-                  onClick={regenerateFonts}
-                  className="px-6 h-12 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-xl transition-all duration-200"
-                >
-                  Random
-                </button>
+                <>
+                  <button
+                    onClick={regenerateFonts}
+                    className="px-6 h-12 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-xl transition-all duration-200"
+                  >
+                    Random
+                  </button>
+                  
+                  <button
+                    onClick={async () => {
+                      const html2canvas = (await import('html2canvas')).default;
+                      const element = document.querySelector('.font-bold.leading-tight') as HTMLElement;
+                      if (element) {
+                        const canvas = await html2canvas(element, {
+                          backgroundColor: '#000000',
+                          scale: 2,
+                        });
+                        const link = document.createElement('a');
+                        link.download = 'random-typeface.png';
+                        link.href = canvas.toDataURL();
+                        link.click();
+                      }
+                    }}
+                    className="px-6 h-12 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-xl transition-all duration-200"
+                  >
+                    Export
+                  </button>
+                </>
               )}
               
               <button
